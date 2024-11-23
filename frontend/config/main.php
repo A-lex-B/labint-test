@@ -19,7 +19,7 @@ return [
             ],
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'frontend\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
         ],
@@ -45,7 +45,12 @@ return [
             'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'user'
+                ],
+                'users/get-token' => 'user/get-token',
+                '<action:\w*>' => 'site/<action>'
             ],
         ],
        

@@ -2,6 +2,9 @@
 
 namespace frontend\controllers;
 
+use yii\filters\AccessControl;
+use yii\filters\auth\HttpBasicAuth;
+use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
 
 /**
@@ -9,5 +12,31 @@ use yii\rest\ActiveController;
  */
 class UserController extends ActiveController
 {
-    public $modelClass = 'common\models\User';
+    public $modelClass = 'frontend\models\User';
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        $behaviors['access'] = [
+            'class' => AccessControl::class,
+            'except' => ['get-token'],
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['@'],
+                ], 
+            ]
+        ];
+        /* $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::class,
+        ]; */
+        
+        return $behaviors;
+    }
+
+    public function actionGetToken()
+    {
+
+    }
 }

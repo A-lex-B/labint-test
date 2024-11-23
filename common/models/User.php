@@ -210,16 +210,4 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
-
-    public function fields()
-    {
-        return [
-            'id',
-            'username',
-            'email',
-            'status',
-            'created_at',
-            'updated_at'
-        ];
-    }
 }
