@@ -12,7 +12,7 @@ class m241123_165635_alter_users_table extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('{{%user}}', 'access_token', $this->string()->defaultValue(null));
+        $this->addColumn('{{%user}}', 'access_token', $this->string()->defaultValue(null)->unique());
         $this->alterColumn('{{%user}}', 'auth_key', $this->string(32)->defaultValue(null));
         $this->alterColumn('{{%user}}', 'password_hash', $this->string()->defaultValue(null));
     }

@@ -3,9 +3,20 @@
 namespace frontend\models;
 
 use common\models\User as BaseUser;
+use Yii;
+use yii\behaviors\AttributeBehavior;
+use yii\db\BaseActiveRecord;
 
+/**
+ * User model
+ * 
+ * @property string $access_token
+ */
 class User extends BaseUser
 {
+    const SCENARIO_CREATE = 'create';
+    const SCENARIO_UPDATE = 'update';
+
     public function rules()
     {
         return [
@@ -25,9 +36,34 @@ class User extends BaseUser
         ];
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+
+        $scenarios[self::SCENARIO_CREATE] = ['username', 'email', 'status'];
+        $scenarios[self::SCENARIO_UPDATE] = ['email'];
+
+        return $scenarios;
+    }
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        $behaviors[] = [
+            'class' => AttributeBehavior::class,
+            'attributes' => [
+                BaseActiveRecord::EVENT_BEFORE_INSERT => 'access_token'
+            ],
+            'value' => [$this, 'generateAccessToken']
+        ];
+
+        return $behaviors;
+    }
+
     public function fields()
     {
-        return [
+        $fields = [
             'id',
             'username',
             'email',
@@ -35,10 +71,21 @@ class User extends BaseUser
             'created_at',
             'updated_at'
         ];
+
+        if (Yii::$app->request->isPost) {
+            $fields[] = 'access_token';
+        }
+
+        return $fields;
+    }
+
+    public function generateAccessToken()
+    {
+        return Yii::$app->security->generateRandomString();
     }
 
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return static::findOne(['auth_key' => $token, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['access_token' => $token, 'status' => self::STATUS_ACTIVE]);
     }
 }

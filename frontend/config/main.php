@@ -22,6 +22,7 @@ return [
             'identityClass' => 'frontend\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
+            'enableSession' => false
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
@@ -47,10 +48,16 @@ return [
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'user'
+                    'controller' => 'user',
+                    'except' => [
+                        'index'
+                    ],
+                    'ruleConfig' => [
+                        'class' => 'yii\web\UrlRule',
+                        'defaults' => ['id' => 0]
+                    ],
+                    'pluralize' => false
                 ],
-                'users/get-token' => 'user/get-token',
-                '<action:\w*>' => 'site/<action>'
             ],
         ],
        
