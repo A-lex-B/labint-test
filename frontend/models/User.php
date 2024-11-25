@@ -16,6 +16,7 @@ class User extends BaseUser
 {
     const SCENARIO_CREATE = 'create';
     const SCENARIO_UPDATE = 'update';
+    const SCENARIO_DELETE = 'delete';
 
     public function rules()
     {
@@ -42,6 +43,7 @@ class User extends BaseUser
 
         $scenarios[self::SCENARIO_CREATE] = ['username', 'email', 'status'];
         $scenarios[self::SCENARIO_UPDATE] = ['email'];
+        $scenarios[self::SCENARIO_DELETE] = ['status'];
 
         return $scenarios;
     }
@@ -67,7 +69,6 @@ class User extends BaseUser
             'id',
             'username',
             'email',
-            'status',
             'created_at',
             'updated_at'
         ];

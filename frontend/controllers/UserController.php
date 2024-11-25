@@ -7,6 +7,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
+use yii\web\ServerErrorHttpException;
 
 /**
  * User controller
@@ -53,7 +54,7 @@ class UserController extends ActiveController
         $actions['update']['findModel'] = [$this, 'findModel'];
         $actions['update']['scenario'] = User::SCENARIO_UPDATE;
 
-        $actions['delete']['findModel'] = [$this, 'findModel'];
+        unset($actions['delete']);
         
         $actions['options']['resourceOptions'] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
 
@@ -63,5 +64,18 @@ class UserController extends ActiveController
     public function findModel()
     {
         return Yii::$app->user->identity;
+    }
+
+    public function actionDelete()
+    {
+        $model = $this->findModel();
+
+        $model->scenario = User::SCENARIO_DELETE;
+        $model->status = User::STATUS_DELETED;
+        if ($model->save() === false) {
+            throw new ServerErrorHttpException('Failed to delete the object for unknown reason.');
+        }
+        
+        Yii::$app->getResponse()->setStatusCode(204);
     }
 }
